@@ -9,7 +9,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 // ==UserScript==
 // @name              秒传链接提取
 // @namespace         moe.cangku.mengzonefire
-// @version           1.5.4
+// @version           1.5.5
 // @description       用于提取和生成百度网盘秒传链接
 // @author            mengzonefire
 // @match             *://pan.baidu.com/disk/home*
@@ -226,11 +226,16 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
   ;
 
   function initButtonHome() {
+    var loop_count = 0;
     var loop = setInterval(function () {
       var html_tag = $('div.tcuLAu');
       if (!html_tag.length) return false;
-      if (!$('#h5Input0').length) return false;
-      html_tag.append(html_btn);
+      loop_count++;
+
+      if (loop_count > 40) {
+        html_tag.append(html_btn);
+      } else if (!$('#h5Input0').length) return false;else html_tag.append(html_btn);
+
       var loop2 = setInterval(function () {
         var btn_tag = $('#bdlink_btn');
         if (!btn_tag.length) return false;
@@ -1045,6 +1050,12 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       responseType: 'text',
       onload: function onload(r) {
         style = r.response;
+
+        if (style.length < 100) {
+          alert('秒传链接提取:\n外部资源加载错误, 脚本无法运行, 请尝试刷新页面');
+          return;
+        }
+
         GM_setValue(themes, style);
         GM_addStyle(style);
       },
